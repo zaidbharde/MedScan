@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MedScan — Medical Image Analysis</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:        #0d1117;
+      --surface:   #161b22;
+      --border:    #21262d;
+      --accent:    #2ea84f;
+      --accent-dim:#1a6630;
+      --text:      #e6edf3;
+      --muted:     #7d8590;
+      --error-bg:  #1a0a0a;
+      --error-bd:  #6e1c1c;
+      --error-tx:  #f85149;
+      --success-bg:#0a1a0e;
+      --success-bd:#1a6630;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Inter', sans-serif;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 48px 16px 80px;
+    }
+
+    /* ── Header ── */
+    header {
+      text-align: center;
+      margin-bottom: 40px;
+    }
+
+    .logo {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+
+    .logo-icon {
+      width: 40px; height: 40px;
+      background: var(--accent);
+      border-radius: 10px;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px;
+    }
+
+    .logo-text {
+      font-family: 'Space Grotesk', sans-serif;
+      font-size: 1.6rem;
+      font-weight: 700;
+      letter-spacing: -0.5px;
+    }
+
+    .logo-text span { color: var(--accent); }
+
+    header p {
+      color: var(--muted);
+      font-size: 0.9rem;
+      font-weight: 300;
+    }
+
+    /* ── Card ── */
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 32px;
+      width: 100%;
+      max-width: 640px;
+    }
+
+    /* ── Upload Zone ── */
+    .upload-zone {
+      border: 2px dashed var(--border);
+      border-radius: 12px;
+      padding: 40px 24px;
+      text-align: center;
+      cursor: pointer;
+      transition: border-color 0.2s, background 0.2s;
+      position: relative;
+      margin-bottom: 20px;
+    }
+
+    .upload-zone:hover, .upload-zone.dragover {
+      border-color: var(--accent);
+      background: rgba(46,168,79,0.05);
+    }
+
+    .upload-zone input[type="file"] {
+      position: absolute; inset: 0;
+      opacity: 0; cursor: pointer; width: 100%; height: 100%;
+    }
+
+    .upload-icon { font-size: 2.4rem; margin-bottom: 12px; }
+
+    .upload-zone h3 {
+      font-size: 0.95rem;
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+
+    .upload-zone p {
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+
+    /* ── Preview ── */
+    #preview-wrap {
+      display: none;
+      margin-bottom: 20px;
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid var(--border);
+      position: relative;
+    }
+
+    #preview-img {
+      width: 100%;
+      max-height: 280px;
+      object-fit: contain;
+      background: #000;
+      display: block;
+    }
+
+    .preview-label {
+      position: absolute;
+      top: 10px; left: 10px;
+      background: rgba(0,0,0,0.7);
+      color: var(--text);
+      font-size: 0.75rem;
+      padding: 4px 10px;
+      border-radius: 20px;
+      backdrop-filter: blur(4px);
+    }
+
+    .remove-btn {
+      position: absolute;
+      top: 10px; right: 10px;
+      background: rgba(0,0,0,0.7);
+      border: none; color: var(--muted);
+      width: 28px; height: 28px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1rem;
+      display: flex; align-items: center; justify-content: center;
+      backdrop-filter: blur(4px);
+      transition: color 0.2s;
+    }
+    .remove-btn:hover { color: var(--error-tx); }
+
+    /* ── Button ── */
+    .btn {
+      width: 100%;
+      padding: 14px;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 10px;
+      font-size: 0.95rem;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: 'Inter', sans-serif;
+      transition: background 0.2s, transform 0.1s;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+
+    .btn:hover { background: #3cc45e; }
+    .btn:active { transform: scale(0.98); }
+    .btn:disabled { background: var(--accent-dim); cursor: not-allowed; opacity: 0.6; }
+
+    .spinner {
+      width: 18px; height: 18px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: none;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ── Result ── */
+    .result-box {
+      margin-top: 24px;
+      background: var(--success-bg);
+      border: 1px solid var(--success-bd);
+      border-radius: 12px;
+      overflow: hidden;
+    }
+
+    .result-header {
+      display: flex; align-items: center; gap: 8px;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--success-bd);
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .result-body {
+      padding: 20px;
+      font-size: 0.88rem;
+      line-height: 1.75;
+      color: #cdd9e5;
+      white-space: pre-wrap;
+    }
+
+    /* ── Error ── */
+    .error-box {
+      margin-top: 24px;
+      background: var(--error-bg);
+      border: 1px solid var(--error-bd);
+      border-radius: 12px;
+      padding: 16px 20px;
+      font-size: 0.85rem;
+      color: var(--error-tx);
+      display: flex; gap: 10px; align-items: flex-start;
+    }
+
+    .error-box .err-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
+
+    /* ── Footer ── */
+    footer {
+      margin-top: 40px;
+      color: var(--muted);
+      font-size: 0.78rem;
+      text-align: center;
+    }
+
+    footer a { color: var(--accent); text-decoration: none; }
+  </style>
+</head>
+<body>
+
+  <header>
+    <div class="logo">
+      <div class="logo-icon">🩺</div>
+      <div class="logo-text">Med<span>Scan</span></div>
+    </div>
+    <p>Upload a prescription or medical image — AI will analyze it instantly</p>
+  </header>
+
+  <div class="card">
+
+    <!-- Upload Zone -->
+    <div class="upload-zone" id="dropZone">
+      <input type="file" id="fileInput" name="image" accept="image/*"/>
+      <div class="upload-icon">📂</div>
+      <h3>Drop your image here</h3>
+      <p>or click to browse &nbsp;·&nbsp; JPG, PNG, WEBP supported</p>
+    </div>
+
+    <!-- Image Preview -->
+    <div id="preview-wrap">
+      <img id="preview-img" src="" alt="Preview"/>
+      <div class="preview-label" id="preview-label">image.jpg</div>
+      <button class="remove-btn" id="removeBtn" title="Remove">✕</button>
+    </div>
+
+    <!-- Submit -->
+    <button class="btn" id="submitBtn" onclick="submitForm()">
+      <span id="btn-icon">🔬</span>
+      <span id="btn-text">Analyze Image</span>
+      <div class="spinner" id="spinner"></div>
+    </button>
+
+    <!-- Result / Error from Flask -->
+    {% if result %}
+    <div class="result-box">
+      <div class="result-header">✅ &nbsp;Analysis Complete</div>
+      <div class="result-body">{{ result | safe }}</div>
+    </div>
+    {% endif %}
+
+    {% if error %}
+    <div class="error-box">
+      <span class="err-icon">⚠️</span>
+      <span>{{ error }}</span>
+    </div>
+    {% endif %}
+
+  </div>
+
+  <footer>
+    Powered by <a href="https://aistudio.google.com" target="_blank">Gemini 2.5 Flash</a>
+    &nbsp;·&nbsp; For educational use only
+  </footer>
+
+  <script>
+    const fileInput  = document.getElementById('fileInput');
+    const dropZone   = document.getElementById('dropZone');
+    const previewWrap= document.getElementById('preview-wrap');
+    const previewImg = document.getElementById('preview-img');
+    const previewLbl = document.getElementById('preview-label');
+    const removeBtn  = document.getElementById('removeBtn');
+    const submitBtn  = document.getElementById('submitBtn');
+    const spinner    = document.getElementById('spinner');
+    const btnIcon    = document.getElementById('btn-icon');
+    const btnText    = document.getElementById('btn-text');
+
+    // File selected
+    fileInput.addEventListener('change', () => {
+      if (fileInput.files[0]) showPreview(fileInput.files[0]);
+    });
+
+    // Drag & drop
+    dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
+    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
+    dropZone.addEventListener('drop', e => {
+      e.preventDefault();
+      dropZone.classList.remove('dragover');
+      const file = e.dataTransfer.files[0];
+      if (file && file.type.startsWith('image/')) {
+        fileInput.files = e.dataTransfer.files;
+        showPreview(file);
+      }
+    });
+
+    function showPreview(file) {
+      const url = URL.createObjectURL(file);
+      previewImg.src = url;
+      previewLbl.textContent = file.name;
+      previewWrap.style.display = 'block';
+      dropZone.style.display = 'none';
+    }
+
+    removeBtn.addEventListener('click', () => {
+      fileInput.value = '';
+      previewImg.src = '';
+      previewWrap.style.display = 'none';
+      dropZone.style.display = 'block';
+    });
+
+    function submitForm() {
+      if (!fileInput.files[0]) {
+        alert('Pehle ek image choose karo!');
+        return;
+      }
+      // Loading state
+      submitBtn.disabled = true;
+      btnIcon.style.display = 'none';
+      btnText.textContent = 'Analyzing...';
+      spinner.style.display = 'block';
+
+      // Build form and submit
+      const form = document.createElement('form');
+      form.method = 'POST';
+      form.action = '/generate';
+      form.enctype = 'multipart/form-data';
+      form.style.display = 'none';
+
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.name = 'image';
+
+      // Transfer file via DataTransfer
+      const dt = new DataTransfer();
+      dt.items.add(fileInput.files[0]);
+      input.files = dt.files;
+
+      form.appendChild(input);
+      document.body.appendChild(form);
+      form.submit();
+    }
+  </script>
+
+</body>
+</html>
