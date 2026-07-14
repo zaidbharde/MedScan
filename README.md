@@ -1,131 +1,143 @@
-# Medicine-Recognition-System
+# 💊 Medicine Recognition System
 
-This Flask web application utilizes Google's Generative AI models to generate detailed medical descriptions for uploaded images. The project, which focuses on medical content generation, incorporates two key models: the Pro-Vision model for in-depth medical descriptions and the Pro model for additional content generation. Upon uploading an image, the application uses the Pro-Vision model to generate comprehensive medical descriptions, ensuring clinical accuracy. Additionally, a validation step with the Pro model ensures that the context is indeed related to the medical field. The user is provided with generated content on successful validation, while the interface prompts for a valid medical image otherwise. The project's user interaction includes uploading images through a simple web form, content generation based on the uploaded images, and a validation step to ensure medical relevance. To maintain security, the application loads the required Google API key from environment variables. Further improvements could involve enhanced error handling, a more user-friendly interface, and thorough documentation for future development and maintenance.
+An AI-powered Flask web app that identifies medicines from images and generates detailed, easy-to-understand medical information using Google's Gemini Vision API (`gemini-2.5-flash`).
 
-## Built With
+Upload a photo of a medicine (or capture one live via camera), and the app analyzes it to provide composition, usage, dosage guidance, precautions, and specialist recommendations — with a clean dark-themed UI and bilingual (Hindi/English) support.
 
- - Google-GenerativeAI
- - Flask
+![Python](https://img.shields.io/badge/Python-3.10+-blue)
+![Flask](https://img.shields.io/badge/Flask-Backend-black)
+![Gemini](https://img.shields.io/badge/Google-Gemini%202.5%20Flash-orange)
+![License](https://img.shields.io/badge/License-MIT-green)
 
-## Getting Started
+---
 
-This will help you understand how you may give instructions on setting up your project locally.
-To get a local copy up and running follow these simple example steps.
+## ✨ Features
 
-## Installation Steps
+- 📷 **Image Upload & Live Camera Capture** — analyze medicines via file upload or your device camera
+- 🤖 **AI-Powered Recognition** — uses `gemini-2.5-flash` via the `google-genai` SDK for accurate medical analysis
+- 🌗 **Dark/Light Mode** — polished dark-themed UI with toggle support
+- 🌐 **Hindi/English Toggle** — view results in your preferred language
+- 📜 **Analysis History** — past scans are saved and browsable
+- 📄 **PDF Export** — download analysis reports as PDFs
+- 🩺 **Specialist Suggestions** — recommends relevant doctor specialization with a direct Google Maps link to nearby options
+- 📦 **Portable Setup** — one-click `RUN_ME.bat` installer with offline pip wheel support (no internet needed for install on repeat setups)
 
-### Option 1: Installation from GitHub
+---
 
-Follow these steps to install and set up the project directly from the GitHub repository:
+## 🛠️ Tech Stack
 
-1. **Clone the Repository**
-   - Open your terminal or command prompt.
-   - Navigate to the directory where you want to install the project.
-   - Run the following command to clone the GitHub repository:
-     ```
-     git clone https://github.com/KalyanMurapaka45/--------------------.git
-     ```
+| Layer          | Technology                          |
+|----------------|--------------------------------------|
+| Backend        | Flask (Python)                      |
+| AI Model       | Google Gemini 2.5 Flash (`google-genai` SDK) |
+| Frontend       | HTML, CSS, JavaScript               |
+| PDF Generation | (your PDF lib, e.g. `reportlab`/`weasyprint`) |
+| Packaging      | `RUN_ME.bat` + offline pip wheels    |
 
-2. **Create a Virtual Environment** (Optional but recommended)
-   - It's a good practice to create a virtual environment to manage project dependencies. Run the following command:
-     ```
-     conda create -p <Environment_Name> python==<python version> -y
-     ```
+---
 
-3. **Activate the Virtual Environment** (Optional)
-   - Activate the virtual environment based on your operating system:
-       ```
-       conda activate <Environment_Name>/
-       ```
+## 🚀 Getting Started
 
-4. **Install Dependencies**
-   - Navigate to the project directory:
-     ```
-     cd [project_directory]
-     ```
-   - Run the following command to install project dependencies:
-     ```
-     pip install -r requirements.txt
-     ```
+### Prerequisites
+- Python 3.10+
+- A Google AI Studio API key ([get one here](https://aistudio.google.com/app/apikey))
 
-5. **Run the Project**
-   - Start the project by running the appropriate command.
-     ```
-     python app.py
-     ```
+### Option 1: Quick Setup (Windows)
 
-6. **Access the Project**
-   - Open a web browser or the appropriate client to access the project.<br>
+1. Clone the repo:
+   ```bash
+   git clone https://github.com/zaidbharde/medicine-recognition-system.git
+   cd medicine-recognition-system
+   ```
+2. Double-click `RUN_ME.bat` — it handles dependency installation (offline wheels included) and launches the app automatically.
 
-### Option 2: Installation from DockerHub
+### Option 2: Manual Setup
 
-If you prefer to use Docker, you can install and run the project using a Docker container from DockerHub:
+1. **Clone the repository**
+   ```bash
+   git clone https://github.com/zaidbharde/medicine-recognition-system.git
+   cd medicine-recognition-system
+   ```
 
-1. **Pull the Docker Image**
-   - Open your terminal or command prompt.
-   - Run the following command to pull the Docker image from DockerHub:
-     ```
-     docker pull kalyan45/movierecommend-app
-     ```
-     This command downloads the Docker image from the DockerHub.
+2. **Create a virtual environment** (recommended)
+   ```bash
+   python -m venv venv
+   venv\Scripts\activate      # Windows
+   source venv/bin/activate   # macOS/Linux
+   ```
 
-2. **Run the Docker Container**
-   - Start the Docker container by running the following command. Adjust the port mapping as needed:
-     ```
-     docker run -p 5000:5000 kalyan45/movierecommend-app
-     ```
-     This command launches the project within a Docker container.
+3. **Install dependencies**
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-3. **Access the Project**
-   - Open a web browser or the appropriate client to access the project.<br>
+4. **Set up your API key** (see below)
 
-   
-## API Key Setup
+5. **Run the app**
+   ```bash
+   python app.py
+   ```
 
-To use this project, you need an API key from Google Gemini Large Language Model. Follow these steps to obtain and set up your API key:
+6. Open your browser at `http://localhost:5000`
 
-1. **Get API Key:**
-   - Visit Alkali App [Click Here](https://makersuite.google.com/app/apikey).
-   - Follow the instructions to create an account and obtain your API key.
+---
 
-2. **Set Up API Key:**
-   - Create a file named `.env` in the project root.
-   - Add your API key to the `.env` file:
-     ```dotenv
-     GOOGLE_API_KEY=your_api_key_here
-     ```
+## 🔑 API Key Setup
 
-   **Note:** Keep your API key confidential. Do not share it publicly or expose it in your code.<br>
+This project uses the **`google-genai`** SDK with the **`gemini-2.5-flash`** model.
 
+1. Get your API key from [Google AI Studio](https://aistudio.google.com/app/apikey).
+2. Create a `.env` file in the project root:
+   ```dotenv
+   GOOGLE_API_KEY=your_api_key_here
+   ```
+3. Keep this key private — never commit `.env` to version control.
 
-## Contributing
+> **Note:** This project has been migrated from the deprecated `google-generativeai` SDK to the current `google-genai` SDK to avoid 404/401/405/503 errors from older API versions.
 
-Contributions are what make the open-source community such an amazing place to learn, inspire, and create. Any contributions you make are **greatly appreciated**.
+---
 
-• **Report bugs**: If you encounter any bugs, please let us know. Open up an issue and let us know the problem.
+## 📸 Screenshots
 
-• **Contribute code**: If you are a developer and want to contribute, follow the instructions below to get started!
+*(Add screenshots of the dark-mode UI, camera capture, and PDF report here)*
 
-1. Fork the Project
-2. Create your Feature Branch
-3. Commit your Changes
-4. Push to the Branch
+---
+
+## 🗺️ Roadmap
+
+- [ ] Add support for multiple medicine detection in a single image
+- [ ] Expand specialist database with more granular recommendations
+- [ ] Add multi-user login and cloud sync for history
+
+---
+
+## 🤝 Contributing
+
+Contributions are welcome!
+
+1. Fork the project
+2. Create your feature branch (`git checkout -b feature/AmazingFeature`)
+3. Commit your changes (`git commit -m 'Add some AmazingFeature'`)
+4. Push to the branch (`git push origin feature/AmazingFeature`)
 5. Open a Pull Request
 
-• **Suggestions**: If you don't want to code but have some awesome ideas, open up an issue explaining some updates or improvements you would like to see!
+Found a bug or have a suggestion? Open an issue!
 
-#### Don't forget to give the project a star! Thanks again!
+---
 
-## License
+## ⚠️ Disclaimer
 
-This project is licensed under the [Open Source Initiative (OSI)](https://opensource.org/) approved GNU General Public License v3.0 License - see the [LICENSE.txt](LICENSE.txt) file for details.<br>
+This tool is intended for **informational purposes only** and does not substitute professional medical advice. Always consult a licensed healthcare provider before making any medical decisions.
 
+---
 
-## Contact Details
+## 📄 License
 
-Hema Kalyan Murapaka - [kalyanmurapaka274@gmail.com](kalyanmurapaka274@gmail.com)<br>
+Licensed under the [MIT License](LICENSE) — feel free to use, modify, and distribute with attribution.
 
+---
 
-## Acknowledgements
+## 📬 Contact
 
-We'd like to extend our gratitude to all individuals and organizations who have played a role in the development and success of this project. Your support, whether through contributions, inspiration, or encouragement, has been invaluable. Thank you for being a part of our journey.
+**Zaid Bharde**
+GitHub: [@zaidbharde](https://github.com/zaidbharde)
