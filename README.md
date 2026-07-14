@@ -97,11 +97,6 @@ This project uses the **`google-genai`** SDK with the **`gemini-2.5-flash`** mod
 
 ---
 
-## 📸 Screenshots
-
-*(Add screenshots of the dark-mode UI, camera capture, and PDF report here)*
-
----
 
 ## 🗺️ Roadmap
 
