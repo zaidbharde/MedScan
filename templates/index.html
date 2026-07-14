@@ -4,290 +4,494 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>MedScan — Medical Image Analysis</title>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet"/>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=IBM+Plex+Sans:wght@300;400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet"/>
   <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
     :root {
-      --bg:        #0d1117;
-      --surface:   #161b22;
-      --border:    #21262d;
-      --accent:    #2ea84f;
-      --accent-dim:#1a6630;
-      --text:      #e6edf3;
-      --muted:     #7d8590;
-      --error-bg:  #1a0a0a;
-      --error-bd:  #6e1c1c;
-      --error-tx:  #f85149;
-      --success-bg:#0a1a0e;
-      --success-bd:#1a6630;
+      --bg:          #0A0E0F;
+      --surface:     #13191B;
+      --border:      #21282B;
+      --border-hover:#2A3438;
+      --teal:        #2DD4A7;
+      --teal-dim:    #1A7A5A;
+      --teal-glow:   rgba(45, 212, 167, 0.12);
+      --blue:        #4C8DFF;
+      --red:         #F85149;
+      --red-dim:     #5C1A1A;
+      --red-bg:      rgba(248, 81, 73, 0.06);
+      --amber:       #D29922;
+      --text:        #E6EDF3;
+      --text-muted:  #7D8590;
+      --text-secondary: #B0B8C4;
+      --radius:      5px;
+      --font-head:   'Space Grotesk', sans-serif;
+      --font-body:   'IBM Plex Sans', sans-serif;
+      --font-mono:   'IBM Plex Mono', monospace;
     }
 
     body {
       background: var(--bg);
       color: var(--text);
-      font-family: 'Inter', sans-serif;
+      font-family: var(--font-body);
       min-height: 100vh;
       display: flex;
       flex-direction: column;
       align-items: center;
-      padding: 48px 16px 80px;
+      padding: 48px 16px 60px;
+      -webkit-font-smoothing: antialiased;
     }
 
-    /* ── Header ── */
     header {
       text-align: center;
-      margin-bottom: 40px;
+      margin-bottom: 32px;
     }
 
     .logo {
-      display: inline-flex;
+      display: flex;
       align-items: center;
+      justify-content: center;
       gap: 10px;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
 
     .logo-icon {
-      width: 40px; height: 40px;
-      background: var(--accent);
-      border-radius: 10px;
-      display: flex; align-items: center; justify-content: center;
-      font-size: 20px;
+      width: 32px;
+      height: 32px;
+      color: var(--teal);
     }
 
     .logo-text {
-      font-family: 'Space Grotesk', sans-serif;
-      font-size: 1.6rem;
+      font-family: var(--font-head);
+      font-size: 1.5rem;
       font-weight: 700;
-      letter-spacing: -0.5px;
+      letter-spacing: -0.03em;
     }
 
-    .logo-text span { color: var(--accent); }
+    .logo-text span { color: var(--teal); }
 
-    header p {
-      color: var(--muted);
-      font-size: 0.9rem;
+    .subtitle {
+      color: var(--text-muted);
+      font-size: 0.85rem;
       font-weight: 300;
+      max-width: 340px;
+      margin: 0 auto;
+      line-height: 1.5;
     }
 
-    /* ── Card ── */
     .card {
       background: var(--surface);
       border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 32px;
+      border-radius: var(--radius);
+      padding: 28px;
       width: 100%;
-      max-width: 640px;
+      max-width: 540px;
+      box-shadow: 0 8px 32px rgba(45, 212, 167, 0.05), 0 1px 4px rgba(0,0,0,0.4);
     }
 
-    /* ── Upload Zone ── */
     .upload-zone {
+      position: relative;
       border: 2px dashed var(--border);
-      border-radius: 12px;
-      padding: 40px 24px;
+      border-radius: var(--radius);
+      padding: 40px 24px 36px;
       text-align: center;
       cursor: pointer;
-      transition: border-color 0.2s, background 0.2s;
-      position: relative;
+      transition: border-color 0.25s, background 0.25s, box-shadow 0.25s, opacity 0.3s;
+      overflow: hidden;
       margin-bottom: 20px;
-    }
-
-    .upload-zone:hover, .upload-zone.dragover {
-      border-color: var(--accent);
-      background: rgba(46,168,79,0.05);
     }
 
     .upload-zone input[type="file"] {
-      position: absolute; inset: 0;
-      opacity: 0; cursor: pointer; width: 100%; height: 100%;
-    }
-
-    .upload-icon { font-size: 2.4rem; margin-bottom: 12px; }
-
-    .upload-zone h3 {
-      font-size: 0.95rem;
-      font-weight: 500;
-      margin-bottom: 6px;
-    }
-
-    .upload-zone p {
-      font-size: 0.8rem;
-      color: var(--muted);
-    }
-
-    /* ── Preview ── */
-    #preview-wrap {
-      display: none;
-      margin-bottom: 20px;
-      border-radius: 12px;
-      overflow: hidden;
-      border: 1px solid var(--border);
-      position: relative;
-    }
-
-    #preview-img {
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      cursor: pointer;
       width: 100%;
-      max-height: 280px;
+      height: 100%;
+      z-index: 3;
+    }
+
+    .upload-zone:focus-within {
+      outline: 2px solid var(--teal);
+      outline-offset: 2px;
+    }
+
+    .upload-zone:hover {
+      border-color: var(--border-hover);
+    }
+
+    .scan-line {
+      position: absolute;
+      left: 4px;
+      right: 4px;
+      height: 2px;
+      background: linear-gradient(
+        90deg,
+        transparent 0%,
+        rgba(45,212,167,0.15) 15%,
+        rgba(45,212,167,0.7) 40%,
+        rgba(45,212,167,0.9) 50%,
+        rgba(45,212,167,0.7) 60%,
+        rgba(45,212,167,0.15) 85%,
+        transparent 100%
+      );
+      box-shadow: 0 0 6px rgba(45,212,167,0.15);
+      opacity: 0;
+      pointer-events: none;
+      z-index: 1;
+      animation: scan 5s linear infinite;
+    }
+
+    .upload-zone:hover .scan-line,
+    .upload-zone.dragover .scan-line,
+    .upload-zone.analyzing .scan-line,
+    .upload-zone.has-file:hover .scan-line {
+      opacity: 1;
+    }
+
+    .upload-zone:hover .scan-line {
+      animation-duration: 3.5s;
+    }
+
+    .upload-zone.dragover .scan-line {
+      animation-duration: 2.5s;
+      box-shadow: 0 0 10px rgba(45,212,167,0.3);
+    }
+
+    .upload-zone.analyzing .scan-line {
+      animation-duration: 1.5s;
+      box-shadow: 0 0 14px rgba(45,212,167,0.4);
+    }
+
+    @keyframes scan {
+      0%, 6%  { top: -2px; opacity: 0; }
+      9%      { opacity: 0.7; }
+      86%     { opacity: 0.7; }
+      91%     { top: 100%; opacity: 0; }
+      100%    { top: -2px; opacity: 0; }
+    }
+
+    .upload-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .upload-content .icon {
+      width: 36px;
+      height: 36px;
+      color: var(--text-muted);
+      margin-bottom: 2px;
+    }
+
+    .upload-content h3 {
+      font-family: var(--font-head);
+      font-size: 1rem;
+      font-weight: 500;
+    }
+
+    .upload-content .hint {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      font-family: var(--font-mono);
+      font-weight: 400;
+    }
+
+    .preview-content {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 8px;
+      position: relative;
+      z-index: 2;
+    }
+
+    .preview-content img {
+      width: 100%;
+      max-height: 200px;
       object-fit: contain;
       background: #000;
+      border-radius: 4px;
       display: block;
     }
 
-    .preview-label {
-      position: absolute;
-      top: 10px; left: 10px;
-      background: rgba(0,0,0,0.7);
-      color: var(--text);
-      font-size: 0.75rem;
-      padding: 4px 10px;
-      border-radius: 20px;
-      backdrop-filter: blur(4px);
-    }
-
-    .remove-btn {
-      position: absolute;
-      top: 10px; right: 10px;
-      background: rgba(0,0,0,0.7);
-      border: none; color: var(--muted);
-      width: 28px; height: 28px;
-      border-radius: 50%;
+    .change-link {
+      font-family: var(--font-mono);
+      font-size: 0.73rem;
+      color: var(--teal);
+      text-decoration: none;
+      border-bottom: 1px dashed rgba(45,212,167,0.4);
       cursor: pointer;
-      font-size: 1rem;
-      display: flex; align-items: center; justify-content: center;
-      backdrop-filter: blur(4px);
-      transition: color 0.2s;
+      transition: color 0.15s, border-color 0.15s;
     }
-    .remove-btn:hover { color: var(--error-tx); }
 
-    /* ── Button ── */
+    .change-link:hover {
+      color: #5EE8C0;
+      border-bottom-color: #5EE8C0;
+    }
+
+    .error-message {
+      display: none;
+      align-items: flex-start;
+      gap: 7px;
+      font-size: 0.8rem;
+      color: var(--amber);
+      margin-top: 12px;
+      text-align: left;
+      font-weight: 400;
+      line-height: 1.45;
+      position: relative;
+      z-index: 2;
+    }
+
+    .error-message .err-icon {
+      width: 14px;
+      height: 14px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .upload-zone.has-error {
+      border-color: var(--red);
+      background: var(--red-bg);
+    }
+
+    .upload-zone.has-error .error-message {
+      display: flex;
+    }
+
+
+
+    .upload-zone.analyzing {
+      opacity: 0.65;
+      border-color: var(--teal);
+      border-style: solid;
+      pointer-events: none;
+    }
+
+    .upload-zone.dragover {
+      border-color: var(--teal);
+      border-style: solid;
+      background: rgba(45,212,167,0.04);
+      box-shadow: 0 0 24px var(--teal-glow), inset 0 0 20px rgba(45,212,167,0.03);
+    }
+
     .btn {
       width: 100%;
-      padding: 14px;
-      background: var(--accent);
-      color: #fff;
+      padding: 12px 20px;
+      background: var(--teal);
+      color: #0A0E0F;
       border: none;
-      border-radius: 10px;
-      font-size: 0.95rem;
+      border-radius: var(--radius);
+      font-size: 0.9rem;
       font-weight: 600;
+      font-family: var(--font-body);
       cursor: pointer;
-      font-family: 'Inter', sans-serif;
-      transition: background 0.2s, transform 0.1s;
-      display: flex; align-items: center; justify-content: center; gap: 8px;
+      transition: background 0.2s, transform 0.1s, box-shadow 0.2s, opacity 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      letter-spacing: 0.01em;
     }
 
-    .btn:hover { background: #3cc45e; }
-    .btn:active { transform: scale(0.98); }
-    .btn:disabled { background: var(--accent-dim); cursor: not-allowed; opacity: 0.6; }
+    .btn:hover {
+      background: #4ADEB5;
+      box-shadow: 0 0 18px rgba(45,212,167,0.18);
+    }
+
+    .btn:active {
+      transform: scale(0.98);
+    }
+
+    .btn:disabled {
+      background: var(--teal-dim);
+      opacity: 0.5;
+      cursor: not-allowed;
+      box-shadow: none;
+    }
+
+    .btn:focus-visible {
+      outline: 2px solid var(--teal);
+      outline-offset: 2px;
+    }
+
+    .btn.loading .btn-text {
+      opacity: 0.8;
+    }
 
     .spinner {
-      width: 18px; height: 18px;
-      border: 2px solid rgba(255,255,255,0.3);
-      border-top-color: #fff;
+      width: 15px;
+      height: 15px;
+      border: 2px solid rgba(10,14,15,0.2);
+      border-top-color: #0A0E0F;
       border-radius: 50%;
       animation: spin 0.7s linear infinite;
       display: none;
     }
-    @keyframes spin { to { transform: rotate(360deg); } }
 
-    /* ── Result ── */
+    .btn.loading .spinner {
+      display: block;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
     .result-box {
       margin-top: 24px;
-      background: var(--success-bg);
-      border: 1px solid var(--success-bd);
-      border-radius: 12px;
+      border: 1px solid var(--teal-dim);
+      border-radius: var(--radius);
       overflow: hidden;
     }
 
     .result-header {
-      display: flex; align-items: center; gap: 8px;
-      padding: 12px 16px;
-      border-bottom: 1px solid var(--success-bd);
-      font-size: 0.8rem;
-      font-weight: 600;
-      color: var(--accent);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 9px 14px;
+      background: rgba(45,212,167,0.05);
+      font-family: var(--font-mono);
+      font-size: 0.7rem;
+      font-weight: 500;
+      color: var(--teal);
       text-transform: uppercase;
-      letter-spacing: 0.05em;
+      letter-spacing: 0.08em;
+    }
+
+    .result-header svg {
+      width: 13px;
+      height: 13px;
     }
 
     .result-body {
-      padding: 20px;
-      font-size: 0.88rem;
-      line-height: 1.75;
-      color: #cdd9e5;
-      white-space: pre-wrap;
+      padding: 18px;
+      font-size: 0.87rem;
+      line-height: 1.7;
+      color: var(--text-secondary);
     }
 
-    /* ── Error ── */
     .error-box {
       margin-top: 24px;
-      background: var(--error-bg);
-      border: 1px solid var(--error-bd);
-      border-radius: 12px;
-      padding: 16px 20px;
-      font-size: 0.85rem;
-      color: var(--error-tx);
-      display: flex; gap: 10px; align-items: flex-start;
+      border: 1px solid var(--red-dim);
+      border-radius: var(--radius);
+      padding: 14px 16px;
+      font-size: 0.83rem;
+      color: var(--red);
+      display: flex;
+      gap: 9px;
+      align-items: flex-start;
+      background: var(--red-bg);
+      line-height: 1.4;
     }
 
-    .error-box .err-icon { font-size: 1.1rem; flex-shrink: 0; margin-top: 1px; }
+    .error-box .err-icon {
+      width: 15px;
+      height: 15px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
 
-    /* ── Footer ── */
     footer {
-      margin-top: 40px;
-      color: var(--muted);
-      font-size: 0.78rem;
+      margin-top: 36px;
+      color: var(--text-muted);
+      font-size: 0.7rem;
       text-align: center;
+      font-family: var(--font-mono);
     }
 
-    footer a { color: var(--accent); text-decoration: none; }
+    footer a {
+      color: var(--teal);
+      text-decoration: none;
+    }
+
+    footer a:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 480px) {
+      body { padding: 24px 12px 40px; }
+      .card { padding: 20px; }
+      .upload-zone { padding: 32px 16px 28px; }
+      .logo-text { font-size: 1.3rem; }
+      .subtitle { font-size: 0.8rem; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .scan-line {
+        animation: none !important;
+        display: none !important;
+      }
+      .spinner {
+        animation-duration: 1.4s;
+      }
+    }
   </style>
 </head>
 <body>
 
   <header>
     <div class="logo">
-      <div class="logo-icon">🩺</div>
+      <svg class="logo-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+        <line x1="12" y1="4" x2="12" y2="20"/>
+        <line x1="4" y1="12" x2="20" y2="12"/>
+      </svg>
       <div class="logo-text">Med<span>Scan</span></div>
     </div>
-    <p>Upload a prescription or medical image — AI will analyze it instantly</p>
+    <p class="subtitle">Upload a prescription or medicine photo for instant AI analysis</p>
   </header>
 
   <div class="card">
 
-    <!-- Upload Zone -->
-    <div class="upload-zone" id="dropZone">
-      <input type="file" id="fileInput" name="image" accept="image/*"/>
-      <div class="upload-icon">📂</div>
-      <h3>Drop your image here</h3>
-      <p>or click to browse &nbsp;·&nbsp; JPG, PNG, WEBP supported</p>
-    </div>
+    <form method="POST" action="/generate" enctype="multipart/form-data" id="uploadForm">
+      <div class="upload-zone{% if error %} has-error{% endif %}" id="dropZone">
+        <div class="scan-line"></div>
+        <input type="file" id="fileInput" name="image" accept="image/*"/>
 
-    <!-- Image Preview -->
-    <div id="preview-wrap">
-      <img id="preview-img" src="" alt="Preview"/>
-      <div class="preview-label" id="preview-label">image.jpg</div>
-      <button class="remove-btn" id="removeBtn" title="Remove">✕</button>
-    </div>
+        <div class="upload-content" id="uploadContent">
+          <svg class="icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+            <polyline points="17 8 12 3 7 8"/>
+            <line x1="12" y1="3" x2="12" y2="15"/>
+          </svg>
+          <h3>Add a photo of your medicine</h3>
+          <span class="hint">Tap to browse — JPG, PNG, WEBP</span>
+        </div>
 
-    <!-- Submit -->
-    <button class="btn" id="submitBtn" onclick="submitForm()">
-      <span id="btn-icon">🔬</span>
-      <span id="btn-text">Analyze Image</span>
-      <div class="spinner" id="spinner"></div>
-    </button>
+        <div class="preview-content" id="previewContent">
+          <img id="previewImg" src="" alt="Upload preview"/>
+          <a href="#" class="change-link" id="changeLink">Change image</a>
+        </div>
 
-    <!-- Result / Error from Flask -->
+        <div class="error-message" id="errorMessage"{% if error %} style="display:flex"{% endif %}>
+          <svg class="err-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+            <circle cx="12" cy="12" r="10"/>
+            <line x1="12" y1="8" x2="12" y2="12"/>
+            <line x1="12" y1="16" x2="12.01" y2="16"/>
+          </svg>
+          <span class="error-text" id="errorText">{{ error or '' }}</span>
+        </div>
+      </div>
+
+      <button class="btn" id="submitBtn" type="submit">
+        <span class="btn-text" id="btnText">Analyze Image</span>
+        <div class="spinner" id="spinner"></div>
+      </button>
+    </form>
+
     {% if result %}
     <div class="result-box">
-      <div class="result-header">✅ &nbsp;Analysis Complete</div>
+      <div class="result-header">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round">
+          <polyline points="20 6 9 17 4 12"/>
+        </svg>
+        Analysis Complete
+      </div>
       <div class="result-body">{{ result | safe }}</div>
-    </div>
-    {% endif %}
-
-    {% if error %}
-    <div class="error-box">
-      <span class="err-icon">⚠️</span>
-      <span>{{ error }}</span>
     </div>
     {% endif %}
 
@@ -299,81 +503,100 @@
   </footer>
 
   <script>
-    const fileInput  = document.getElementById('fileInput');
-    const dropZone   = document.getElementById('dropZone');
-    const previewWrap= document.getElementById('preview-wrap');
-    const previewImg = document.getElementById('preview-img');
-    const previewLbl = document.getElementById('preview-label');
-    const removeBtn  = document.getElementById('removeBtn');
-    const submitBtn  = document.getElementById('submitBtn');
-    const spinner    = document.getElementById('spinner');
-    const btnIcon    = document.getElementById('btn-icon');
-    const btnText    = document.getElementById('btn-text');
+    const fileInput      = document.getElementById('fileInput');
+    const dropZone       = document.getElementById('dropZone');
+    const uploadContent  = document.getElementById('uploadContent');
+    const previewContent = document.getElementById('previewContent');
+    const previewImg     = document.getElementById('previewImg');
+    const changeLink     = document.getElementById('changeLink');
+    const submitBtn      = document.getElementById('submitBtn');
+    const btnText        = document.getElementById('btnText');
+    const spinner        = document.getElementById('spinner');
+    const errorText      = document.getElementById('errorText');
+    const form           = document.getElementById('uploadForm');
 
-    // File selected
     fileInput.addEventListener('change', () => {
-      if (fileInput.files[0]) showPreview(fileInput.files[0]);
+      const file = fileInput.files[0];
+      if (!file) return;
+      if (!file.type.startsWith('image/')) {
+        showError('This file type is not supported. Use a photo in JPG, PNG, or WEBP format.');
+        return;
+      }
+      clearError();
+      showPreview(file);
     });
 
-    // Drag & drop
-    dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('dragover'); });
-    dropZone.addEventListener('dragleave', () => dropZone.classList.remove('dragover'));
-    dropZone.addEventListener('drop', e => {
+    dropZone.addEventListener('dragover', (e) => {
       e.preventDefault();
+      e.stopPropagation();
+      dropZone.classList.add('dragover');
+    });
+
+    dropZone.addEventListener('dragleave', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      dropZone.classList.remove('dragover');
+    });
+
+    dropZone.addEventListener('drop', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
       dropZone.classList.remove('dragover');
       const file = e.dataTransfer.files[0];
-      if (file && file.type.startsWith('image/')) {
-        fileInput.files = e.dataTransfer.files;
-        showPreview(file);
+      if (!file) return;
+      if (!file.type.startsWith('image/')) {
+        showError('This doesn\u2019t look like a medical image. Try another photo.');
+        return;
       }
+      clearError();
+      fileInput.files = e.dataTransfer.files;
+      showPreview(file);
     });
 
     function showPreview(file) {
       const url = URL.createObjectURL(file);
       previewImg.src = url;
-      previewLbl.textContent = file.name;
-      previewWrap.style.display = 'block';
-      dropZone.style.display = 'none';
+      previewImg.onload = () => URL.revokeObjectURL(url);
+      previewContent.style.display = 'flex';
+      uploadContent.style.display = 'none';
+      dropZone.classList.add('has-file');
+      dropZone.classList.remove('has-error');
     }
 
-    removeBtn.addEventListener('click', () => {
-      fileInput.value = '';
+    function clearPreview() {
+      previewContent.style.display = 'none';
+      uploadContent.style.display = 'flex';
+      dropZone.classList.remove('has-file');
       previewImg.src = '';
-      previewWrap.style.display = 'none';
-      dropZone.style.display = 'block';
+      fileInput.value = '';
+    }
+
+    changeLink.addEventListener('click', (e) => {
+      e.preventDefault();
+      fileInput.click();
     });
 
-    function submitForm() {
-      if (!fileInput.files[0]) {
-        alert('Pehle ek image choose karo!');
+    function showError(msg) {
+      dropZone.classList.add('has-error');
+      errorText.textContent = msg;
+    }
+
+    function clearError() {
+      dropZone.classList.remove('has-error');
+    }
+
+    form.addEventListener('submit', (e) => {
+      if (!fileInput.files || !fileInput.files[0]) {
+        e.preventDefault();
+        showError('Select a photo of your medicine first.');
         return;
       }
-      // Loading state
+      clearError();
+      dropZone.classList.add('analyzing');
+      submitBtn.classList.add('loading');
+      btnText.textContent = 'Analyzing\u2026';
       submitBtn.disabled = true;
-      btnIcon.style.display = 'none';
-      btnText.textContent = 'Analyzing...';
-      spinner.style.display = 'block';
-
-      // Build form and submit
-      const form = document.createElement('form');
-      form.method = 'POST';
-      form.action = '/generate';
-      form.enctype = 'multipart/form-data';
-      form.style.display = 'none';
-
-      const input = document.createElement('input');
-      input.type = 'file';
-      input.name = 'image';
-
-      // Transfer file via DataTransfer
-      const dt = new DataTransfer();
-      dt.items.add(fileInput.files[0]);
-      input.files = dt.files;
-
-      form.appendChild(input);
-      document.body.appendChild(form);
-      form.submit();
-    }
+    });
   </script>
 
 </body>
